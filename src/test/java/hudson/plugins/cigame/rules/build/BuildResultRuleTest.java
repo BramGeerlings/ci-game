@@ -1,14 +1,32 @@
 package hudson.plugins.cigame.rules.build;
 
+import hudson.model.Build;
 import hudson.model.Result;
+import hudson.model.User;
 import hudson.plugins.cigame.model.RuleResult;
 import hudson.plugins.cigame.rules.build.BuildResultRule;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.AbstractSet;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Set;
+
 import static org.junit.Assert.*;
 import static org.hamcrest.core.Is.is;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class BuildResultRuleTest {
+
+    @Mock
+    private Build build;
 
     @Test
     public void testFirstBuildSuccess() {
@@ -71,5 +89,21 @@ public class BuildResultRuleTest {
         BuildResultRule rule = new BuildResultRule(100, -100);
         RuleResult results = rule.evaluate(Result.UNSTABLE, Result.SUCCESS);
         assertNull("Unstable builds should return null", results);
+    }
+
+    @Test
+    public void testMultiUserBuildFailure(){
+        BuildResultRule rule = new BuildResultRule(100, -100);
+        when(build.getResult()).thenReturn(Result.FAILURE);
+        Set<User> mockSet = new AbstractSet<User>() {
+            @Override public Iterator<User> iterator() {
+                return null;
+            }
+            @Override public int size() {
+                return 2;
+            }
+        };
+        when(build.getCulprits()).thenReturn(mockSet);
+        assertEquals("MultiUser build that fails should return the message",Messages.BuildRuleSet_BuildFailedMultiUser(),rule.evaluate(build).getDescription());
     }
 }

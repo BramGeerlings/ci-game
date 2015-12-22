@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.jvnet.hudson.main:maven-interceptor:1.335">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jvnet/hudson/main/maven-interceptor/1.335/maven-interceptor-1.335.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jvnet/hudson/main/maven-interceptor/1.335/maven-interceptor-1.335-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jvnet/hudson/main/maven-interceptor/1.335/maven-interceptor-1.335-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
