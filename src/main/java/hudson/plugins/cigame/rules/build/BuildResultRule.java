@@ -1,7 +1,9 @@
 package hudson.plugins.cigame.rules.build;
 
 import hudson.model.AbstractBuild;
+import hudson.model.Hudson;
 import hudson.model.Result;
+import hudson.plugins.cigame.GameDescriptor;
 import hudson.plugins.cigame.model.Rule;
 import hudson.plugins.cigame.model.RuleResult;
 
@@ -29,7 +31,8 @@ public class BuildResultRule implements Rule {
     public RuleResult evaluate(AbstractBuild<?, ?> build) {
         Result result = build.getResult();
         Result lastResult = null;
-        if(build.getCulprits().size() > 1 && build.getResult() == Result.FAILURE){
+
+        if(!Hudson.getInstance().getDescriptorByType(GameDescriptor.class).getAllowMultiAuthorBreak() && build.getCulprits().size() > 1 && build.getResult() == Result.FAILURE){
             RuleResult ruleResult = new RuleResult(0.0,Messages.BuildRuleSet_BuildFailedMultiUser());
             return ruleResult;
         }

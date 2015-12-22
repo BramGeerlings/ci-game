@@ -28,7 +28,7 @@ public class GameDescriptor extends BuildStepDescriptor<Publisher> {
     
     private transient RuleBook rulebook;
     private boolean namesAreCaseSensitive = true;
-    
+    private boolean allowMultiAuthorBreak = true;
     private int passedTestIncreasingPoints = 1;
     private int passedTestDecreasingPoints = 0;
     private int failedTestIncreasingPoints = -1;
@@ -95,6 +95,14 @@ public class GameDescriptor extends BuildStepDescriptor<Publisher> {
 
     public void setNamesAreCaseSensitive(boolean namesAreCaseSensitive) {
         this.namesAreCaseSensitive = namesAreCaseSensitive;
+    }
+
+    public boolean getAllowMultiAuthorBreak() {
+        return allowMultiAuthorBreak;
+    }
+
+    public void setAllowMultiAuthorBreak(boolean allowMultiAuthorBreak) {
+        this.allowMultiAuthorBreak = allowMultiAuthorBreak;
     }
 
     @Override
