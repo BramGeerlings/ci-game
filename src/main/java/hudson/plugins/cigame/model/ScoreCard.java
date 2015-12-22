@@ -63,7 +63,7 @@ public class ScoreCard {
         
         // prevent ConcurrentModificationExceptions for e.g. matrix builds (see JENKINS-11498):
         synchronized(this) {
-            if (scores == null) {
+            if (scores == null)
                 scores = new LinkedList<Score>();
             }
             scores.addAll(scoresForBuild);
