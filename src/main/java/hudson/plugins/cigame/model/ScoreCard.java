@@ -39,14 +39,13 @@ public class ScoreCard {
         
         List<Score> scoresForBuild = new LinkedList<Score>();
         for (Rule rule : ruleset.getRules()) {
-        	if (null != rule){ //check if rule is not null
+        	if (null != rule){
 	        	if (listener != null) {
 	        		listener.getLogger().append("[ci-game] evaluating rule: " + rule.getName() + "\n");
 	        	}
 	            RuleResult<?> result = evaluate(build, rule);
-	            if ((result != null) && result != RuleResult.EMPTY_RESULT) //if the result is not null, and the result isn't an empty result
-                {
-                    Score score = new Score(ruleset.getName(), rule.getName(), result.getPoints(), result.getDescription()); //create a new score
+	            if ((result != null) && result != RuleResult.EMPTY_RESULT){
+                    Score score = new Score(ruleset.getName(), rule.getName(), result.getPoints(), result.getDescription());
                     if(score.getDescription()!= "") {
                         scoresForBuild.add(score); //only add the score to the score list if there's a description for it.
                     }
@@ -62,8 +61,8 @@ public class ScoreCard {
         }
         
         // prevent ConcurrentModificationExceptions for e.g. matrix builds (see JENKINS-11498):
-        synchronized(this) {{
-            if (scores == null)
+        synchronized(this) {
+            if (scores == null){
                 scores = new LinkedList<Score>();
             }
             scores.addAll(scoresForBuild);

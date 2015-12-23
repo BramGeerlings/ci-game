@@ -7,6 +7,7 @@ import hudson.model.User;
 import hudson.plugins.cigame.GameDescriptor;
 import hudson.plugins.cigame.model.Rule;
 import hudson.plugins.cigame.model.RuleResult;
+import jenkins.model.Jenkins;
 
 import java.util.Set;
 
@@ -34,12 +35,11 @@ public class BuildResultRule implements Rule {
     public RuleResult evaluate(AbstractBuild<?, ?> build) {
         Result result = build.getResult();
         Result lastResult = null;
-        if(Hudson.getInstance().getDescriptorByType(GameDescriptor.class).getAllowMultiAuthorBreak() && //check the plug-in settings
-                build.getCulprits().size() >= 1 &&   //check if there's more than one person involved with the build
-                build.getResult() == Result.FAILURE){   //check if the build is a failure
-                    RuleResult ruleResult = new RuleResult(0.0,Messages.BuildRuleSet_BuildFailedMultiUser());
-                    return ruleResult;
+
+        if(isMultiAuthorBreakAllowed() && build.getCulprits().size() > 1 && result == Result.FAILURE){   //check if there's more than one person involved with the build and if the build is a failure
+            return new RuleResult(0.0,Messages.BuildRuleSet_BuildFailedMultiUser());
         }
+
         if (build.getPreviousBuild() != null) {
             lastResult = build.getPreviousBuild().getResult();
         }
@@ -57,5 +57,9 @@ public class BuildResultRule implements Rule {
             }
         }
         return null;
+    }
+
+    private boolean isMultiAuthorBreakAllowed(){
+        return Jenkins.getInstance().getDescriptorByType(GameDescriptor.class).getAllowMultiAuthorBreak(); //check the plug-in settings
     }
 }
