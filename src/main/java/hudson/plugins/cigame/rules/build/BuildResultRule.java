@@ -34,8 +34,8 @@ public class BuildResultRule implements Rule {
     public RuleResult evaluate(AbstractBuild<?, ?> build) {
         Result result = build.getResult();
         Result lastResult = null;
-        if(!Hudson.getInstance().getDescriptorByType(GameDescriptor.class).getAllowMultiAuthorBreak() && //check the plug-in settings
-                build.getCulprits().size() > 1 &&   //check if there's more than one person involved with the build
+        if(Hudson.getInstance().getDescriptorByType(GameDescriptor.class).getAllowMultiAuthorBreak() && //check the plug-in settings
+                build.getCulprits().size() >= 1 &&   //check if there's more than one person involved with the build
                 build.getResult() == Result.FAILURE){   //check if the build is a failure
                     RuleResult ruleResult = new RuleResult(0.0,Messages.BuildRuleSet_BuildFailedMultiUser());
                     return ruleResult;

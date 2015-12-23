@@ -28,7 +28,7 @@ public class GameDescriptor extends BuildStepDescriptor<Publisher> {
     
     private transient RuleBook rulebook;
     private boolean namesAreCaseSensitive = true;
-    private boolean allowMultiAuthorBreak = true;
+    private boolean allowMultiAuthorBreak = false;
     private int passedTestIncreasingPoints = 1;
     private int passedTestDecreasingPoints = 0;
     private int failedTestIncreasingPoints = -1;
