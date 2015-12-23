@@ -39,19 +39,17 @@ public class ScoreCard {
         
         List<Score> scoresForBuild = new LinkedList<Score>();
         for (Rule rule : ruleset.getRules()) {
-        	if (null != rule){
+        	if (null != rule){ //check if rule is not null
 	        	if (listener != null) {
 	        		listener.getLogger().append("[ci-game] evaluating rule: " + rule.getName() + "\n");
 	        	}
 	            RuleResult<?> result = evaluate(build, rule);
-	            if ((result != null) && result != RuleResult.EMPTY_RESULT) {
-                    Score score = null;
-
-                    score = new Score(ruleset.getName(), rule.getName(), result.getPoints(), result.getDescription());
+	            if ((result != null) && result != RuleResult.EMPTY_RESULT) //if the result is not null, and the result isn't an empty result
+                {
+                    Score score = new Score(ruleset.getName(), rule.getName(), result.getPoints(), result.getDescription()); //create a new score
                     if(score.getDescription()!= "") {
-                        scoresForBuild.add(score);
+                        scoresForBuild.add(score); //only add the score to the score list if there's a description for it.
                     }
-
 	                if (listener != null) {
 	            		listener.getLogger().append("[ci-game] scored: " + score.getValue() + "\n");
 	            	}
