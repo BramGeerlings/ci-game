@@ -8,10 +8,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import hudson.Extension;
-import hudson.model.Api;
-import hudson.model.Hudson;
-import hudson.model.RootAction;
-import hudson.model.User;
+import hudson.model.*;
 import hudson.security.ACL;
 import hudson.security.AccessControlled;
 import hudson.security.Permission;
@@ -21,6 +18,13 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * Leader board for users participaing in the game.
@@ -158,5 +162,31 @@ public class LeaderBoardAction implements RootAction, AccessControlled {
 
     public Api getApi() {
         return  new Api(this);
+    }
+
+    private void createLeaderBoardBackUp(){
+        try{
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+
+            Document document = documentBuilder.newDocument();
+            Element rootElement = document.createElement("backupDate");
+            document.appendChild(rootElement);
+            for(User participant: User.getAll()) {
+
+                Element user = document.createElement("user");
+                user.appendChild(document.createTextNode(participant.getDisplayName()));
+                rootElement.appendChild(user);
+
+                UserScoreProperty property = participant.getProperty(UserScoreProperty.class);
+                String scoreValue = Double.toString(property.getScore());
+                Element score = document.createElement("score");
+                score.appendChild(document.createTextNode(scoreValue));
+                user.appendChild(score);
+            }
+
+        } catch (ParserConfigurationException pce) {
+            pce.printStackTrace();
+        }
     }
 }
