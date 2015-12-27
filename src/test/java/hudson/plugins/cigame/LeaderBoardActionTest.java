@@ -77,4 +77,5 @@ public class LeaderBoardActionTest {
         assertThat(scores.get(1).getScore(), is(1d));
         assertThat(scores.get(1).getUser().getId(), is("Andy"));
     }
+
 }

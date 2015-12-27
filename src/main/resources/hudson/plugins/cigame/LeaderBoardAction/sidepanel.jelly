@@ -6,6 +6,7 @@ fmt">
     <l:tasks>
       <l:task icon="images/24x24/up.gif" href="${rootURL}/" title="${%Back.To.Dashboard}" />
       <l:task icon="images/24x24/edit-delete.gif" href="confirmResetScores" title="${%Leaderboard.ResetScoresAction}" permission="${app.ADMINISTER}"/>
+      <l:task icon="images/24x24/folder.gif" href="confirmBackUp" title="${%Leaderboard.BackUpScoresAction}" permission="${app.ADMINISTER}"/>
     </l:tasks>
   </l:side-panel>
 </j:jelly>

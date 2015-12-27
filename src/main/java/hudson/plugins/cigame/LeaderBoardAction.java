@@ -1,11 +1,9 @@
 package hudson.plugins.cigame;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import hudson.Extension;
 import hudson.model.*;
@@ -14,17 +12,23 @@ import hudson.security.AccessControlled;
 import hudson.security.Permission;
 import hudson.util.VersionNumber;
 
+import jenkins.model.Jenkins;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 /**
  * Leader board for users participaing in the game.
@@ -118,6 +122,60 @@ public class LeaderBoardAction implements RootAction, AccessControlled {
         }
     }
 
+    public  void doBackUpLeaderBoard(StaplerRequest req, StaplerResponse rsp ) throws IOException{
+        if (Jenkins.getInstance().getACL().hasPermission(Hudson.ADMINISTER)) {
+            doBackUpLeaderBoard(User.getAll());
+        }
+        rsp.sendRedirect2(req.getContextPath());
+    }
+
+    void  doBackUpLeaderBoard(Collection<User> participants)  throws IOException{
+        String documentName = "Leaderboard back-up " + new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+        try{
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+
+            Document document = documentBuilder.newDocument();
+            Element rootElement = document.createElement("backup");
+            document.appendChild(rootElement);
+
+            for(User participant: participants) {
+
+                Element user = document.createElement("user");
+                user.appendChild(document.createTextNode(participant.getDisplayName()));
+                rootElement.appendChild(user);
+
+                Element score = document.createElement("score");
+                String scoreValue = "0.0";
+                UserScoreProperty property = participant.getProperty(UserScoreProperty.class);
+                if ((property != null) && property.isParticipatingInGame()) {
+                    scoreValue = Double.toString(property.getScore());
+                }
+                score.appendChild(document.createTextNode(scoreValue));
+                user.appendChild(score);
+            }
+
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+            DOMSource source = new DOMSource(document);
+            File backupFile = new File("C:\\log\\"+documentName+".xml");
+            backupFile.createNewFile();
+            StreamResult result = new StreamResult(backupFile);
+
+            transformer.transform(source,result);
+
+
+        } catch (ParserConfigurationException pce) {
+            pce.printStackTrace();
+        } catch (TransformerException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     
     @ExportedBean(defaultVisibility = 999)
     public class UserScore {
@@ -164,29 +222,5 @@ public class LeaderBoardAction implements RootAction, AccessControlled {
         return  new Api(this);
     }
 
-    private void createLeaderBoardBackUp(){
-        try{
-            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
 
-            Document document = documentBuilder.newDocument();
-            Element rootElement = document.createElement("backupDate");
-            document.appendChild(rootElement);
-            for(User participant: User.getAll()) {
-
-                Element user = document.createElement("user");
-                user.appendChild(document.createTextNode(participant.getDisplayName()));
-                rootElement.appendChild(user);
-
-                UserScoreProperty property = participant.getProperty(UserScoreProperty.class);
-                String scoreValue = Double.toString(property.getScore());
-                Element score = document.createElement("score");
-                score.appendChild(document.createTextNode(scoreValue));
-                user.appendChild(score);
-            }
-
-        } catch (ParserConfigurationException pce) {
-            pce.printStackTrace();
-        }
-    }
 }
