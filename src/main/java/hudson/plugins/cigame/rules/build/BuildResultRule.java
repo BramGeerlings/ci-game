@@ -36,7 +36,7 @@ public class BuildResultRule implements Rule {
         Result result = build.getResult();
         Result lastResult = null;
 
-        if(isMultiAuthorBreakAllowed() && build.getCulprits().size() > 1 && result == Result.FAILURE){   //check if there's more than one person involved with the build and if the build is a failure
+        if(isMultiAuthorBreakAllowed() && hasMultipleAuthors(build) && result == Result.FAILURE){   //check if there's more than one person involved with the build and if the build is a failure
             return new RuleResult(0.0,Messages.BuildRuleSet_BuildFailedMultiUser());
         }
 
@@ -61,5 +61,16 @@ public class BuildResultRule implements Rule {
 
     private boolean isMultiAuthorBreakAllowed(){
         return Jenkins.getInstance().getDescriptorByType(GameDescriptor.class).getAllowMultiAuthorBreak(); //check the plug-in settings
+    }
+
+    private boolean hasMultipleAuthors(AbstractBuild<?,?> build){
+
+        final int size = build.getRootBuild().getCulprits().size();
+
+        if(size >1) {
+            return true;
+        }else{
+            return  false;
+        }
     }
 }

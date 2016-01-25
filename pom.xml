@@ -9,8 +9,8 @@
 
   <artifactId>ci-game</artifactId>
   <packaging>hpi</packaging>
-  <version>1.24-SNAPSHOT</version>
-  <name>Jenkins Continuous Integration game</name>
+  <version>RHD 0.14</version>
+  <name>Jenkins Continuous Integration game, RHD</name>
   <url>http://wiki.jenkins-ci.org/display/JENKINS/The+Continuous+Integration+Game+plugin</url>
   
   <scm>
